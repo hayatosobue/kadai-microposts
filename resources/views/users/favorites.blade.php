@@ -11,7 +11,7 @@
                     <img class="rounded img-fluid" src="{{ Gravatar::src($user->email, 500) }}" alt="">
                 </div>
             </div>
-            @include('user_follow.follow_button', ['user' => $user])
+            
         </aside>
         <div class="col-sm-8">
             <ul class="nav nav-tabs nav-justified mb-3">
@@ -19,9 +19,21 @@
                 <li class="nav-item"><a href="{{ route('users.followings', ['id' => $user->id]) }}" class="nav-link {{ Request::is('users/*/followings') ? 'active' : '' }}">Followings <span class="badge badge-secondary">{{ $count_followings }}</span></a></li>
                 <li class="nav-item"><a href="{{ route('users.followers', ['id' => $user->id]) }}" class="nav-link {{ Request::is('users/*/followers') ? 'active' : '' }}">Followers <span class="badge badge-secondary">{{ $count_followers }}</span></a></li>
                 <li class="nav-item"><a href="{{ route('users.favorites', ['id' => $user->id]) }}" class="nav-link {{ Request::is('users/*/favorites') ? 'active' : '' }}">Favoritings <span class="badge badge-secondary">{{ $count_favoritings }}</span></a></li>
-
             </ul>
-            @include('users.users', ['users' => $users])
+            @foreach ($favorites as $favorite)
+                <li class="media mb-3">
+                    <img class="mr-2 rounded" src="{{ Gravatar::src($favorite->user->email, 50) }}" alt="">
+                    <div class="media-body">
+                        <div>
+                            {!! link_to_route('users.show', $favorite->user->name, ['id' => $favorite->user->id]) !!} <span class="text-muted">posted at {{ $favorite->created_at }}</span>
+                        </div>
+                        <div>
+                            <p class="mb-0">{!! nl2br(e($favorite->content)) !!}</p>
+                        </div>
+                    @include('favorites.favorite_button', ['micropost' => $favorite])
+                    </div>
+                </li>
+            @endforeach
         </div>
     </div>
 @endsection
